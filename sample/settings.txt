@@ -1,0 +1,27 @@
++------------------------------------------------------------------------------+
+| Settings                                                             [Back] |
++------------------------------------------------------------------------------+
+|                                                                              |
+| +----------------------------+  +----------------------------------------+ |
+| | Categories                 |  | General Settings                       | |
+| | ========================== |  | Theme: [Light] [Dark]                  | |
+| | > General                  |  | Language: [English ▼]                  | |
+| | > Security                 |  | Auto-save: [✓] Enabled                 | |
+| | > Notifications            |  |                                        | |
+| +----------------------------+  | Security Settings                      | |
+|                                | Password expires: [30 days]            | |
+|                                | Two-factor auth: [✓] Enabled           | |
+|                                |                                        | |
+|                                | [ Save Changes ] [ Reset ] [ Cancel ] | |
+|                                +----------------------------------------+ |
+|                                                                              |
++------------------------------------------------------------------------------+
+
+INTERACTIVE_ELEMENTS:
+[Back] - click: Return to main → main.txt
+> General - click: General settings → (no screen transition)
+> Security - click: Security settings → (no screen transition)
+> Notifications - click: Notification settings → (no screen transition)
+[Save Changes] - click: Save all settings → main.txt
+[Reset] - click: Reset to defaults → (no screen transition)
+[Cancel] - click: Cancel changes → main.txt

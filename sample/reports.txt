@@ -1,0 +1,30 @@
++------------------------------------------------------------------------------+
+| Reports                                                              [Back] |
++------------------------------------------------------------------------------+
+|                                                                              |
+| +--------------------------------------------------------------------------+ |
+| | Available Reports                                                        | |
+| | ======================================================================== | |
+| | [ Daily Summary ]    Generated: 2024-01-15    Size: 2.3 MB             | |
+| | [ Weekly Analysis ]  Generated: 2024-01-14    Size: 1.8 MB             | |
+| | [ Monthly Report ]   Generated: 2024-01-01    Size: 4.2 MB             | |
+| | [ Custom Report ]    Create new custom report                           | |
+| +--------------------------------------------------------------------------+ |
+|                                                                              |
+| +--------------------------------------------------------------------------+ |
+| | Actions                                                                  | |
+| | [ Download ] [ View ] [ Delete ] [ Generate New ]                       | |
+| +--------------------------------------------------------------------------+ |
+|                                                                              |
++------------------------------------------------------------------------------+
+
+INTERACTIVE_ELEMENTS:
+[Back] - click: Return to main → main.txt
+[Daily Summary] - click: View daily report → (no screen transition)
+[Weekly Analysis] - click: View weekly report → (no screen transition)
+[Monthly Report] - click: View monthly report → (no screen transition)
+[Custom Report] - click: Create custom report → (no screen transition)
+[Download] - click: Download selected report → (no screen transition)
+[View] - click: View selected report → (no screen transition)
+[Delete] - click: Delete selected report → (no screen transition)
+[Generate New] - click: Generate new report → (no screen transition)

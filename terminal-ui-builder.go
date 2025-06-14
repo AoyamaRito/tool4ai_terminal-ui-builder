@@ -540,6 +540,156 @@ func (as *AsciiStudio) ShowGrid() {
 	}
 }
 
+// Automatic validation on startup
+func performStartupValidation() {
+	fmt.Println("🔍 ASCII Art Validation Check")
+	fmt.Println(strings.Repeat("=", 50))
+	
+	// Find all .txt files in current directory
+	files, err := os.ReadDir(".")
+	if err != nil {
+		return
+	}
+	
+	var txtFiles []string
+	for _, file := range files {
+		if !file.IsDir() && strings.HasSuffix(file.Name(), ".txt") {
+			txtFiles = append(txtFiles, file.Name())
+		}
+	}
+	
+	if len(txtFiles) == 0 {
+		fmt.Println("✅ No ASCII art files found to validate")
+		fmt.Println()
+		return
+	}
+	
+	fmt.Printf("Found %d ASCII art file(s) to validate...\n\n", len(txtFiles))
+	
+	totalIssues := 0
+	criticalIssues := []string{}
+	
+	for _, filename := range txtFiles {
+		content, err := os.ReadFile(filename)
+		if err != nil {
+			continue
+		}
+		
+		contentLines := strings.Split(string(content), "\n")
+		height := len(contentLines)
+		as := NewAsciiStudio(height)
+		
+		for i, line := range contentLines {
+			if i < height {
+				runes := []rune(line)
+				for j, r := range runes {
+					if j < CANVAS_WIDTH {
+						as.lines[i][j] = r
+					}
+				}
+			}
+		}
+		
+		issues := as.CheckAlignment()
+		filteredIssues := filterCriticalIssues(issues, contentLines)
+		
+		if len(filteredIssues) > 0 {
+			fmt.Printf("⚠️  %s: %d issue(s)\n", filename, len(filteredIssues))
+			for _, issue := range filteredIssues {
+				if strings.Contains(issue, "alignment gap") || strings.Contains(issue, "width overflow") {
+					criticalIssues = append(criticalIssues, fmt.Sprintf("%s: %s", filename, issue))
+				}
+			}
+			totalIssues += len(filteredIssues)
+		} else {
+			fmt.Printf("✅ %s: No critical issues\n", filename)
+		}
+	}
+	
+	fmt.Println()
+	
+	if len(criticalIssues) > 0 {
+		fmt.Println("🚨 CRITICAL ISSUES DETECTED - AI ASSISTANCE REQUIRED")
+		fmt.Println(strings.Repeat("=", 60))
+		fmt.Println("The following ASCII art issues need immediate attention:")
+		fmt.Println()
+		
+		for i, issue := range criticalIssues {
+			fmt.Printf("%d. %s\n", i+1, issue)
+		}
+		
+		fmt.Println()
+		fmt.Println("📝 RECOMMENDED ACTIONS FOR AI:")
+		fmt.Println("1. Check vertical line alignment (| characters should form straight columns)")
+		fmt.Println("2. Ensure all lines are within 80 character width limit")
+		fmt.Println("3. Verify box borders are properly connected (+, -, | characters)")
+		fmt.Println("4. Fix any gaps in frame structures")
+		fmt.Println("5. Re-run this tool after fixes to verify corrections")
+		fmt.Println()
+		fmt.Printf("Use '%s -mode check -f <filename>' for detailed analysis\n", os.Args[0])
+		fmt.Println(strings.Repeat("=", 60))
+	} else if totalIssues > 0 {
+		fmt.Printf("✅ %d minor issues found but no critical problems detected\n", totalIssues)
+	} else {
+		fmt.Println("✅ All ASCII art files passed validation!")
+	}
+	
+	fmt.Println()
+}
+
+// Filter out non-critical issues to focus on layout problems
+func filterCriticalIssues(issues []string, contentLines []string) []string {
+	var critical []string
+	
+	for _, issue := range issues {
+		// Skip non-ASCII character warnings in INTERACTIVE_ELEMENTS section
+		if strings.Contains(issue, "Non-ASCII character") {
+			// Extract line number
+			lineNum := 0
+			if n, err := fmt.Sscanf(issue, "Line %d,", &lineNum); err == nil && n > 0 {
+				if lineNum > 0 && lineNum <= len(contentLines) {
+					line := contentLines[lineNum-1]
+					// Skip if this line is in INTERACTIVE_ELEMENTS section
+					if strings.Contains(line, "→") || strings.Contains(line, "INTERACTIVE_ELEMENTS") {
+						continue
+					}
+				}
+			}
+		}
+		
+		// Focus on alignment and structural issues
+		if strings.Contains(issue, "alignment gap") || 
+		   strings.Contains(issue, "width overflow") ||
+		   strings.Contains(issue, "border mismatch") {
+			critical = append(critical, issue)
+		}
+	}
+	
+	return critical
+}
+
+// Check for broken links in UI flow
+func checkBrokenLinks(existingScreens []string, actionMap map[string]map[string]string) map[string][]string {
+	brokenLinks := make(map[string][]string)
+	
+	// Create a set of existing screens for quick lookup
+	screenSet := make(map[string]bool)
+	for _, screen := range existingScreens {
+		screenSet[screen] = true
+	}
+	
+	// Check each action's target
+	for source, targets := range actionMap {
+		for target := range targets {
+			if !screenSet[target] {
+				brokenLinks[source] = append(brokenLinks[source], target)
+			}
+		}
+	}
+	
+	return brokenLinks
+}
+
 // UI Flow generation functionality - dynamic version
 func generateUIFlowDynamic(outputFile string, screens []string) error {
 	// If no screens found, use default flow
@@ -603,25 +753,147 @@ func generateUIFlowDynamic(outputFile string, screens []string) error {
 	// Add entry connection
 	mermaid.WriteString(fmt.Sprintf("    Start --> %s\n", strings.TrimSuffix(entryPoint, ".txt")))
 	
-	// Add connections based on detected transitions
-	for source, targets := range screenMap {
+	// Add connections based on detected transitions with action labels
+	actionMap := make(map[string]map[string]string) // source -> target -> action
+	for _, screen := range screens {
+		content, err := os.ReadFile(screen)
+		if err != nil {
+			continue
+		}
+		
+		lines := strings.Split(string(content), "\n")
+		inInteractive := false
+		for _, line := range lines {
+			if strings.HasPrefix(line, "INTERACTIVE_ELEMENTS:") {
+				inInteractive = true
+				continue
+			}
+			if inInteractive && strings.Contains(line, "→") {
+				parts := strings.Split(line, "→")
+				if len(parts) == 2 {
+					target := strings.TrimSpace(parts[1])
+					if strings.HasSuffix(target, ".txt") {
+						// Extract action from the line
+						actionParts := strings.Split(parts[0], "-")
+						action := ""
+						if len(actionParts) >= 2 {
+							elementName := strings.TrimSpace(actionParts[0])
+							actionDesc := ""
+							if colonIdx := strings.Index(actionParts[1], ":"); colonIdx >= 0 {
+								actionDesc = strings.TrimSpace(actionParts[1][colonIdx+1:])
+							}
+							action = fmt.Sprintf("%s\\n%s", elementName, actionDesc)
+						}
+						
+						if actionMap[screen] == nil {
+							actionMap[screen] = make(map[string]string)
+						}
+						actionMap[screen][target] = action
+					}
+				}
+			}
+		}
+	}
+	
+	// Write connections with labels
+	for source, targets := range actionMap {
 		sourceName := strings.TrimSuffix(source, ".txt")
-		for _, target := range targets {
+		for target, action := range targets {
 			targetName := strings.TrimSuffix(target, ".txt")
-			mermaid.WriteString(fmt.Sprintf("    %s --> %s\n", sourceName, targetName))
+			if action != "" {
+				mermaid.WriteString(fmt.Sprintf("    %s -->|%s| %s\n", sourceName, action, targetName))
+			} else {
+				mermaid.WriteString(fmt.Sprintf("    %s --> %s\n", sourceName, targetName))
+			}
 		}
 	}
 	
 	mermaid.WriteString("```\n\n")
 	
-	// Add screen descriptions
-	mermaid.WriteString("## Detected Screens\n\n")
+	// Add screen descriptions with actions
+	mermaid.WriteString("## Screen Transition Details\n\n")
+	mermaid.WriteString("Actions available on each screen and their destinations:\n\n")
+	
 	for _, screen := range screens {
-		mermaid.WriteString(fmt.Sprintf("- **%s**", screen))
-		if targets, ok := screenMap[screen]; ok && len(targets) > 0 {
-			mermaid.WriteString(fmt.Sprintf(" → %s", strings.Join(targets, ", ")))
+		mermaid.WriteString(fmt.Sprintf("### %s\n", screen))
+		
+		// Re-read the file to extract all interactive elements
+		content, err := os.ReadFile(screen)
+		if err == nil {
+			lines := strings.Split(string(content), "\n")
+			inInteractive := false
+			hasElements := false
+			
+			for _, line := range lines {
+				if strings.HasPrefix(line, "INTERACTIVE_ELEMENTS:") {
+					inInteractive = true
+					continue
+				}
+				if inInteractive && strings.TrimSpace(line) != "" {
+					if strings.Contains(line, "→") {
+						hasElements = true
+						parts := strings.Split(line, "→")
+						if len(parts) == 2 {
+							action := strings.TrimSpace(parts[0])
+							target := strings.TrimSpace(parts[1])
+							
+							// Parse action details
+							actionParts := strings.Split(action, "-")
+							if len(actionParts) >= 2 {
+								element := strings.TrimSpace(actionParts[0])
+								actionDetail := strings.TrimSpace(actionParts[1])
+								mermaid.WriteString(fmt.Sprintf("- **%s**: %s → %s\n", element, actionDetail, target))
+							} else {
+								mermaid.WriteString(fmt.Sprintf("- %s → %s\n", action, target))
+							}
+						}
+					}
+				}
+			}
+			
+			if !hasElements {
+				mermaid.WriteString("- No interactive elements\n")
+			}
 		}
 		mermaid.WriteString("\n")
+	}
+	
+	// Add usage instructions
+	mermaid.WriteString("## Usage Guide\n\n")
+	mermaid.WriteString("1. When creating ASCII UI for each screen, place the UI at the top\n")
+	mermaid.WriteString("2. Add the `INTERACTIVE_ELEMENTS:` section at the bottom of the screen\n")
+	mermaid.WriteString("3. Describe each interactive element in the following format:\n")
+	mermaid.WriteString("   ```\n")
+	mermaid.WriteString("   [Element Name] - action_type: Description → destination.txt\n")
+	mermaid.WriteString("   ```\n")
+	mermaid.WriteString("   - For no transition: `→ (no screen transition)`\n")
+	mermaid.WriteString("   - For app exit: `→ (application exit)`\n")
+	
+	// Check for broken links and display warnings
+	brokenLinks := checkBrokenLinks(screens, actionMap)
+	if len(brokenLinks) > 0 {
+		fmt.Println("\n⚠️  WARNING: Broken links detected:")
+		fmt.Println(strings.Repeat("=", 60))
+		for source, targets := range brokenLinks {
+			for _, target := range targets {
+				fmt.Printf("❌ %s → %s (file not found)\n", source, target)
+			}
+		}
+		fmt.Println(strings.Repeat("=", 60))
+		totalBroken := 0
+		for _, targets := range brokenLinks {
+			totalBroken += len(targets)
+		}
+		fmt.Printf("💡 Solution: Create the %d missing file(s) or fix the links\n\n", totalBroken)
+		
+		// Add broken links section to the markdown
+		mermaid.WriteString("\n## ⚠️ Broken Links\n\n")
+		mermaid.WriteString("The following target files are missing:\n\n")
+		for source, targets := range brokenLinks {
+			for _, target := range targets {
+				mermaid.WriteString(fmt.Sprintf("- `%s` → `%s`\n", source, target))
+			}
+		}
 	}
 	
 	return os.WriteFile(outputFile, []byte(mermaid.String()), 0644)
@@ -759,133 +1031,133 @@ flowchart TB
 
 // AI Instruction generation functionality
 func generateAIInstruction(layout string, height int) {
-	fmt.Println("以下のASCII UIを作成してください:")
+	fmt.Println("Please create the following ASCII UI:")
 	fmt.Println()
 	
 	switch layout {
 	case "netops":
-		fmt.Println("画面名: Network Operations Center")
-		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println("Screen Name: Network Operations Center")
+		fmt.Printf("Size: %d x %d characters\n", CANVAS_WIDTH, height)
 		fmt.Println()
-		fmt.Println("要求仕様:")
-		fmt.Println("1. 枠線は +, -, | を使用して描画")
-		fmt.Println("2. すべての要素は指定された位置に配置")
-		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println("Requirements:")
+		fmt.Println("1. Draw borders using +, -, and | characters")
+		fmt.Println("2. Place all elements at specified positions")
+		fmt.Println("3. Ensure text fits within frame boundaries")
 		fmt.Println()
-		fmt.Println("UI要素:")
+		fmt.Println("UI Elements:")
 		fmt.Println("1. NetOps Command Center (header)")
-		fmt.Println("   位置: 2, 1")
-		fmt.Println("   内容: NetOps Command Center")
+		fmt.Println("   Position: 2, 1")
+		fmt.Println("   Content: NetOps Command Center")
 		fmt.Println()
 		fmt.Println("2. Status Indicators (header)")
-		fmt.Println("   位置: right-25, 1")
-		fmt.Println("   内容: [LIVE], [ALERT], [X]")
+		fmt.Println("   Position: right-25, 1")
+		fmt.Println("   Content: [LIVE], [ALERT], [X]")
 		fmt.Println()
 		fmt.Println("3. Status Grid (box)")
-		fmt.Println("   位置: 2, 4")
-		fmt.Println("   サイズ: 76 x 4")
-		fmt.Println("   内容: 6つのステータスボックス (STATUS, CPU, MEMORY, NETWORK, STORAGE, LATENCY)")
+		fmt.Println("   Position: 2, 4")
+		fmt.Println("   Size: 76 x 4")
+		fmt.Println("   Content: 6 status boxes (STATUS, CPU, MEMORY, NETWORK, STORAGE, LATENCY)")
 		fmt.Println()
-		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println("Add INTERACTIVE_ELEMENTS section below the ASCII UI in this format:")
 		fmt.Println()
 		fmt.Println("INTERACTIVE_ELEMENTS:")
-		fmt.Println("[LIVE] - click: Toggle live mode → (画面遷移なし)")
+		fmt.Println("[LIVE] - click: Toggle live mode → (no screen transition)")
 		fmt.Println("[ALERT] - click: Show alerts → alerts.txt")
-		fmt.Println("[X] - click: Close application → (アプリケーション終了)")
+		fmt.Println("[X] - click: Close application → (application exit)")
 		
 	case "trading":
-		fmt.Println("画面名: Trading Floor Terminal")
-		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println("Screen Name: Trading Floor Terminal")
+		fmt.Printf("Size: %d x %d characters\n", CANVAS_WIDTH, height)
 		fmt.Println()
-		fmt.Println("要求仕様:")
-		fmt.Println("1. 枠線は +, -, | を使用して描画")
-		fmt.Println("2. すべての要素は指定された位置に配置")
-		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println("Requirements:")
+		fmt.Println("1. Draw borders using +, -, and | characters")
+		fmt.Println("2. Place all elements at specified positions")
+		fmt.Println("3. Ensure text fits within frame boundaries")
 		fmt.Println()
-		fmt.Println("UI要素:")
+		fmt.Println("UI Elements:")
 		fmt.Println("1. TradingFloor Terminal (header)")
-		fmt.Println("   位置: 2, 1")
+		fmt.Println("   Position: 2, 1")
 		fmt.Println()
 		fmt.Println("2. Menu Bar (header)")
-		fmt.Println("   位置: right-30, 1")
-		fmt.Println("   内容: [LIVE], [RISK], [P&L], [ALERTS]")
+		fmt.Println("   Position: right-30, 1")
+		fmt.Println("   Content: [LIVE], [RISK], [P&L], [ALERTS]")
 		fmt.Println()
-		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println("Add INTERACTIVE_ELEMENTS section below the ASCII UI in this format:")
 		fmt.Println()
 		fmt.Println("INTERACTIVE_ELEMENTS:")
-		fmt.Println("[LIVE] - click: Toggle live trading → (画面遷移なし)")
+		fmt.Println("[LIVE] - click: Toggle live trading → (no screen transition)")
 		fmt.Println("[RISK] - click: Open risk management → risk_management.txt")
 		fmt.Println("[P&L] - click: Show P&L report → pnl_report.txt")
 		fmt.Println("[ALERTS] - click: Show alerts → trading_alerts.txt")
 		
 	case "login":
-		fmt.Println("画面名: Login Form")
-		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println("Screen Name: Login Form")
+		fmt.Printf("Size: %d x %d characters\n", CANVAS_WIDTH, height)
 		fmt.Println()
-		fmt.Println("要求仕様:")
-		fmt.Println("1. 枠線は +, -, | を使用して描画")
-		fmt.Println("2. すべての要素は指定された位置に配置")
-		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println("Requirements:")
+		fmt.Println("1. Draw borders using +, -, and | characters")
+		fmt.Println("2. Place all elements at specified positions")
+		fmt.Println("3. Ensure text fits within frame boundaries")
 		fmt.Println()
-		fmt.Println("UI要素:")
+		fmt.Println("UI Elements:")
 		fmt.Println("1. LOGIN FORM (header)")
-		fmt.Println("   位置: center, 1")
+		fmt.Println("   Position: center, 1")
 		fmt.Println()
 		fmt.Println("2. Login Container (box)")
-		fmt.Println("   位置: center, 5")
-		fmt.Println("   サイズ: 40 x 10")
-		fmt.Println("   内容: Username入力欄, Password入力欄, Loginボタン, Cancelボタン")
+		fmt.Println("   Position: center, 5")
+		fmt.Println("   Size: 40 x 10")
+		fmt.Println("   Content: Username input field, Password input field, Login button, Cancel button")
 		fmt.Println()
-		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println("Add INTERACTIVE_ELEMENTS section below the ASCII UI in this format:")
 		fmt.Println()
 		fmt.Println("INTERACTIVE_ELEMENTS:")
-		fmt.Println("Username - input: text入力 → (画面遷移なし)")
-		fmt.Println("Password - input: password入力 → (画面遷移なし)")
+		fmt.Println("Username - input: text input → (no screen transition)")
+		fmt.Println("Password - input: password input → (no screen transition)")
 		fmt.Println("[Login] - click: Submit login → dashboard.txt")
-		fmt.Println("[Cancel] - click: Cancel login → (画面遷移なし)")
+		fmt.Println("[Cancel] - click: Cancel login → (no screen transition)")
 		
 	case "dashboard":
-		fmt.Println("画面名: System Dashboard")
-		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println("Screen Name: System Dashboard")
+		fmt.Printf("Size: %d x %d characters\n", CANVAS_WIDTH, height)
 		fmt.Println()
-		fmt.Println("要求仕様:")
-		fmt.Println("1. 枠線は +, -, | を使用して描画")
-		fmt.Println("2. すべての要素は指定された位置に配置")
-		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println("Requirements:")
+		fmt.Println("1. Draw borders using +, -, and | characters")
+		fmt.Println("2. Place all elements at specified positions")
+		fmt.Println("3. Ensure text fits within frame boundaries")
 		fmt.Println()
-		fmt.Println("UI要素:")
+		fmt.Println("UI Elements:")
 		fmt.Println("1. DASH (header)")
-		fmt.Println("   位置: 2, 1")
+		fmt.Println("   Position: 2, 1")
 		fmt.Println()
 		fmt.Println("2. User info (header)")
-		fmt.Println("   位置: right-15, 1")
-		fmt.Println("   内容: User: admin")
+		fmt.Println("   Position: right-15, 1")
+		fmt.Println("   Content: User: admin")
 		fmt.Println()
 		fmt.Println("3. Sidebar (vertical separator)")
-		fmt.Println("   位置: 20, 2")
-		fmt.Println("   高さ: height-3")
+		fmt.Println("   Position: 20, 2")
+		fmt.Println("   Height: height-3")
 		fmt.Println()
-		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println("Add INTERACTIVE_ELEMENTS section below the ASCII UI in this format:")
 		fmt.Println()
 		fmt.Println("INTERACTIVE_ELEMENTS:")
-		fmt.Println("NAV items - click: Navigate to section → (画面遷移なし)")
+		fmt.Println("NAV items - click: Navigate to section → (no screen transition)")
 		
 	default:
-		fmt.Printf("画面名: %s\n", layout)
-		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Printf("Screen Name: %s\n", layout)
+		fmt.Printf("Size: %d x %d characters\n", CANVAS_WIDTH, height)
 		fmt.Println()
-		fmt.Println("要求仕様:")
-		fmt.Println("1. 枠線は +, -, | を使用して描画")
-		fmt.Println("2. すべての要素は指定された位置に配置")
-		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println("Requirements:")
+		fmt.Println("1. Draw borders using +, -, and | characters")
+		fmt.Println("2. Place all elements at specified positions")
+		fmt.Println("3. Ensure text fits within frame boundaries")
 		fmt.Println()
-		fmt.Println("UI要素:")
-		fmt.Println("カスタムレイアウトを作成してください")
+		fmt.Println("UI Elements:")
+		fmt.Println("Create custom layout as needed")
 		fmt.Println()
-		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println("Add INTERACTIVE_ELEMENTS section below the ASCII UI in this format:")
 		fmt.Println()
 		fmt.Println("INTERACTIVE_ELEMENTS:")
-		fmt.Println("(インタラクティブ要素がある場合はここに記載)")
+		fmt.Println("(list interactive elements if any)")
 	}
 }
 
@@ -898,6 +1170,7 @@ func main() {
 		title    = flag.String("t", "", "Title for the layout")
 		filename = flag.String("f", "", "File to check or view")
 		output   = flag.String("o", "ui-flow.md", "Output file for ui-flow mode")
+		skipCheck = flag.Bool("skip-check", false, "Skip automatic ASCII art validation")
 	)
 	
 	flag.Usage = func() {
@@ -918,6 +1191,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "  view      - View with grid overlay\n")
 		fmt.Fprintf(os.Stderr, "  ai-instruction - Generate AI instructions for creating UI\n")
 		fmt.Fprintf(os.Stderr, "  ui-flow   - Generate UI flow diagram in Mermaid format\n")
+		fmt.Fprintf(os.Stderr, "\nNote: Tool automatically validates ASCII art files on startup\n")
+		fmt.Fprintf(os.Stderr, "Use --skip-check to disable automatic validation\n")
 		fmt.Fprintf(os.Stderr, "\nLayouts (for create mode):\n")
 		fmt.Fprintf(os.Stderr, "  netops    - Network Operations Center\n")
 		fmt.Fprintf(os.Stderr, "  trading   - Trading Floor Terminal\n")
@@ -939,6 +1214,11 @@ func main() {
 	}
 	
 	flag.Parse()
+	
+	// Automatic ASCII art validation on startup (unless skipped)
+	if !*skipCheck {
+		performStartupValidation()
+	}
 	
 	switch *mode {
 	case "create":
