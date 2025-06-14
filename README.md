@@ -2,7 +2,7 @@
 
 🤖 **AI-First Terminal Interface Designer**
 
-**📋 Enable Claude Code to create pixel-perfect ASCII art UI designs instantly!**
+**📋 Enable Claude Code to create perfectly aligned ASCII art UI designs instantly!**
 
 **Designed specifically for AI assistants like Claude Code, ChatGPT, and other AI development tools.**
 
@@ -18,7 +18,7 @@ By using this tool, Claude Code can generate professional, accurate ASCII art te
 
 **For AI Assistants:**
 - **🤖 Easy ASCII UI creation** - Generate complex interfaces without alignment struggles
-- **📐 Perfect ASCII art alignment** - Pixel-perfect terminal UIs every time
+- **📐 Perfect ASCII art alignment** - Perfectly aligned terminal UIs every time
 - **💻 Blueprint for coding** - Use generated designs as implementation guides
 - **⚡ Instant generation** - Simple commands create professional interfaces
 
@@ -59,7 +59,14 @@ By using this tool, Claude Code can generate professional, accurate ASCII art te
 
 ### For AI Assistants
 
-**Claude Code, ChatGPT, and other AI tools can use this directly:**
+**Simply instruct Claude Code, ChatGPT, and other AI tools with prompts like:**
+
+- *"Please use terminal-ui-builder to create a network operations dashboard"*
+- *"Generate a trading interface using the trading layout"*
+- *"Create an ASCII art login form with this tool"*
+- *"Check the alignment of my ASCII art file using terminal-ui-builder"*
+
+**AI tools can then execute these commands directly:**
 
 ```bash
 # AI can generate professional dashboards instantly
