@@ -2,6 +2,8 @@
 
 🤖 **AI-First Terminal Interface Designer**
 
+📖 **[日本語版 README](README_JA.md) | [English README](README.md)**
+
 **📋 Enable Claude Code to create perfectly aligned ASCII art UI designs instantly!**
 
 **Designed specifically for AI assistants like Claude Code, ChatGPT, and other AI development tools.**

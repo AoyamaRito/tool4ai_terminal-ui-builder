@@ -2,6 +2,8 @@
 
 🤖 **AI優先ターミナルインターフェースデザイナー**
 
+📖 **[日本語版 README](README_JA.md) | [English README](README.md)**
+
 **📋 Claude Codeが完璧にアライメントされたアスキーアートUI設計図を瞬時に作成可能！**
 
 **Claude Code、ChatGPT、その他のAI開発ツール専用に設計されています。**
