@@ -1,0 +1,32 @@
++------------------------------------------------------------------------------+
+| System Monitor v2.0                                 [STATUS: OK] [MENU] [X]  |
++------------------------------------------------------------------------------+
+| +---------------------------+  +-------------------------------------------+ |
+| | SYSTEM OVERVIEW           |  | PERFORMANCE METRICS                       | |
+| | ========================= |  | CPU Usage:    [████████░░] 78%            | |
+| | Server:    PROD-WEB-01    |  | Memory:       [██████░░░░] 62%            | |
+| | Uptime:    24d 18h 42m    |  | Disk I/O:     [███░░░░░░░] 31%            | |
+| | Processes: 127 running    |  | Network:      [█████░░░░░] 52%            | |
+| | Users:     42 active      |  |                                           | |
+| +---------------------------+  +-------------------------------------------+ |
+|                                                                              |
+| +--------------------------------------------------------------------------+ |
+| | LOG MONITOR                                                              | |
+| | [14:32:01] INFO  Application started successfully                        | |
+| | [14:32:15] WARN  High memory usage detected (62%)                       | |
+| | [14:32:28] INFO  Database connection established                         | |
+| | [14:32:45] ERROR Failed to connect to backup server                     | |
+| | [14:33:02] INFO  Retrying connection...                                  | |
+| +--------------------------------------------------------------------------+ |
+|                                                                              |
+| [Refresh] [Export] [Settings] [Help]              Last Update: 14:33:05     |
++------------------------------------------------------------------------------+
+
+INTERACTIVE_ELEMENTS:
+[STATUS: OK] - click: Toggle status display → (画面遷移なし)
+[MENU] - click: Open menu dropdown → menu_dropdown.txt
+[X] - click: Close application → (アプリケーション終了)
+[Refresh] - click: Refresh all data → (画面遷移なし)
+[Export] - click: Export logs to file → export_dialog.txt
+[Settings] - click: Open settings dialog → settings.txt
+[Help] - click: Show help documentation → help.txt

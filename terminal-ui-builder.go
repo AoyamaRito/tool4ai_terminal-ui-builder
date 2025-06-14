@@ -540,14 +540,364 @@ func (as *AsciiStudio) ShowGrid() {
 	}
 }
 
+// UI Flow generation functionality - dynamic version
+func generateUIFlowDynamic(outputFile string, screens []string) error {
+	// If no screens found, use default flow
+	if len(screens) == 0 {
+		return generateUIFlow(outputFile)
+	}
+	
+	// Analyze each screen file to extract interactive elements
+	screenMap := make(map[string][]string)
+	for _, screen := range screens {
+		content, err := os.ReadFile(screen)
+		if err != nil {
+			continue
+		}
+		
+		lines := strings.Split(string(content), "\n")
+		inInteractive := false
+		for _, line := range lines {
+			if strings.HasPrefix(line, "INTERACTIVE_ELEMENTS:") {
+				inInteractive = true
+				continue
+			}
+			if inInteractive && strings.Contains(line, "→") {
+				parts := strings.Split(line, "→")
+				if len(parts) == 2 {
+					target := strings.TrimSpace(parts[1])
+					if strings.HasSuffix(target, ".txt") {
+						screenMap[screen] = append(screenMap[screen], target)
+					}
+				}
+			}
+		}
+	}
+	
+	// Generate dynamic Mermaid diagram
+	var mermaid strings.Builder
+	mermaid.WriteString("# UI Flow Diagram\n\n")
+	mermaid.WriteString("```mermaid\n")
+	mermaid.WriteString("flowchart TB\n")
+	
+	// Add start node
+	mermaid.WriteString("    Start([Start])\n")
+	
+	// Determine entry point (usually login.txt or dashboard.txt)
+	entryPoint := "dashboard.txt"
+	for _, s := range screens {
+		if s == "login.txt" {
+			entryPoint = "login.txt"
+			break
+		}
+	}
+	
+	// Add nodes for each screen
+	for _, screen := range screens {
+		screenName := strings.TrimSuffix(screen, ".txt")
+		screenName = strings.Title(strings.ReplaceAll(screenName, "_", " "))
+		mermaid.WriteString(fmt.Sprintf("    %s[%s<br/>%s]\n", 
+			strings.TrimSuffix(screen, ".txt"), screenName, screen))
+	}
+	
+	// Add entry connection
+	mermaid.WriteString(fmt.Sprintf("    Start --> %s\n", strings.TrimSuffix(entryPoint, ".txt")))
+	
+	// Add connections based on detected transitions
+	for source, targets := range screenMap {
+		sourceName := strings.TrimSuffix(source, ".txt")
+		for _, target := range targets {
+			targetName := strings.TrimSuffix(target, ".txt")
+			mermaid.WriteString(fmt.Sprintf("    %s --> %s\n", sourceName, targetName))
+		}
+	}
+	
+	mermaid.WriteString("```\n\n")
+	
+	// Add screen descriptions
+	mermaid.WriteString("## Detected Screens\n\n")
+	for _, screen := range screens {
+		mermaid.WriteString(fmt.Sprintf("- **%s**", screen))
+		if targets, ok := screenMap[screen]; ok && len(targets) > 0 {
+			mermaid.WriteString(fmt.Sprintf(" → %s", strings.Join(targets, ", ")))
+		}
+		mermaid.WriteString("\n")
+	}
+	
+	return os.WriteFile(outputFile, []byte(mermaid.String()), 0644)
+}
+
+// UI Flow generation functionality - static version
+func generateUIFlow(outputFile string) error {
+	mermaidContent := `# UI Flow Diagram
+
+` + "```mermaid" + `
+flowchart TB
+    Start([Start]) --> Login[Login Screen<br/>login.txt]
+    
+    Login -->|Success| Dashboard[System Dashboard<br/>dashboard.txt]
+    Login -->|Cancel| Start
+    
+    Dashboard --> NetOps[Network Operations<br/>netops.txt]
+    Dashboard --> Trading[Trading Floor<br/>trading.txt]
+    Dashboard --> Cyber[Cyber Defense<br/>cyber.txt]
+    Dashboard --> Data[Data Control<br/>data.txt]
+    Dashboard --> Space[Space Mission<br/>space.txt]
+    Dashboard --> Settings[Settings<br/>settings.txt]
+    
+    NetOps -->|[ALERT]| Alerts1[Network Alerts<br/>alerts.txt]
+    NetOps -->|[X]| Exit1([Exit])
+    
+    Trading -->|[RISK]| Risk[Risk Management<br/>risk_management.txt]
+    Trading -->|[P&L]| PnL[P&L Report<br/>pnl_report.txt]
+    Trading -->|[ALERTS]| Alerts2[Trading Alerts<br/>trading_alerts.txt]
+    
+    Cyber -->|Incident| Incident[Incident Details<br/>incident.txt]
+    Cyber -->|Threat Map| ThreatMap[Threat Map<br/>threat_map.txt]
+    
+    Data -->|Export| Export[Export Dialog<br/>export_dialog.txt]
+    Data -->|Query| Query[Query Builder<br/>query_builder.txt]
+    
+    Space -->|Mission Log| MissionLog[Mission Log<br/>mission_log.txt]
+    Space -->|Telemetry| Telemetry[Telemetry Data<br/>telemetry.txt]
+    
+    Settings -->|Save| Dashboard
+    Settings -->|Cancel| Dashboard
+    
+    %% Help screens
+    Dashboard -->|[Help]| Help[Help Documentation<br/>help.txt]
+    NetOps -->|[Help]| Help
+    Trading -->|[Help]| Help
+    
+    %% Return paths
+    Alerts1 --> NetOps
+    Risk --> Trading
+    PnL --> Trading
+    Alerts2 --> Trading
+    Incident --> Cyber
+    ThreatMap --> Cyber
+    Export --> Data
+    Query --> Data
+    MissionLog --> Space
+    Telemetry --> Space
+    Help --> Dashboard
+    
+    %% Styling
+    classDef screenStyle fill:#f9f,stroke:#333,stroke-width:2px
+    classDef alertStyle fill:#f66,stroke:#333,stroke-width:2px
+    classDef helpStyle fill:#6f6,stroke:#333,stroke-width:2px
+    
+    class Login,Dashboard,NetOps,Trading,Cyber,Data,Space,Settings screenStyle
+    class Alerts1,Alerts2,Risk alertStyle
+    class Help helpStyle
+` + "```" + `
+
+## Screen Descriptions
+
+### Login Screen (login.txt)
+- **Interactive Elements:**
+  - Username input field
+  - Password input field
+  - [Login] button → dashboard.txt
+  - [Cancel] button → (no transition)
+
+### System Dashboard (dashboard.txt)
+- **Interactive Elements:**
+  - Navigation menu items → respective screens
+  - [Settings] button → settings.txt
+  - [Help] button → help.txt
+  - [Logout] button → login.txt
+
+### Network Operations (netops.txt)
+- **Interactive Elements:**
+  - [LIVE] toggle → (no transition)
+  - [ALERT] button → alerts.txt
+  - [X] close button → (exit application)
+
+### Trading Floor (trading.txt)
+- **Interactive Elements:**
+  - [LIVE] toggle → (no transition)
+  - [RISK] button → risk_management.txt
+  - [P&L] button → pnl_report.txt
+  - [ALERTS] button → trading_alerts.txt
+
+### Cyber Defense (cyber.txt)
+- **Interactive Elements:**
+  - Incident items → incident.txt
+  - Threat map regions → threat_map.txt
+  - [DEFCON] level selector → (no transition)
+
+### Data Control (data.txt)
+- **Interactive Elements:**
+  - [Export] button → export_dialog.txt
+  - [Query] button → query_builder.txt
+  - Pipeline controls → (no transition)
+
+### Space Mission (space.txt)
+- **Interactive Elements:**
+  - [Mission Log] → mission_log.txt
+  - [Telemetry] → telemetry.txt
+  - Instrument controls → (no transition)
+
+## Navigation Rules
+
+1. **Authentication Required**: All screens except login.txt require authentication
+2. **Back Navigation**: All sub-screens have implicit back navigation to parent
+3. **Global Actions**: Help and Logout available from most screens
+4. **Exit Points**: Application can be closed from main screens via [X] button
+
+## State Management
+
+- User authentication state persists across screens
+- Real-time data updates on dashboard and monitoring screens
+- Settings changes apply globally
+
+`
+
+	return os.WriteFile(outputFile, []byte(mermaidContent), 0644)
+}
+
+// AI Instruction generation functionality
+func generateAIInstruction(layout string, height int) {
+	fmt.Println("以下のASCII UIを作成してください:")
+	fmt.Println()
+	
+	switch layout {
+	case "netops":
+		fmt.Println("画面名: Network Operations Center")
+		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println()
+		fmt.Println("要求仕様:")
+		fmt.Println("1. 枠線は +, -, | を使用して描画")
+		fmt.Println("2. すべての要素は指定された位置に配置")
+		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println()
+		fmt.Println("UI要素:")
+		fmt.Println("1. NetOps Command Center (header)")
+		fmt.Println("   位置: 2, 1")
+		fmt.Println("   内容: NetOps Command Center")
+		fmt.Println()
+		fmt.Println("2. Status Indicators (header)")
+		fmt.Println("   位置: right-25, 1")
+		fmt.Println("   内容: [LIVE], [ALERT], [X]")
+		fmt.Println()
+		fmt.Println("3. Status Grid (box)")
+		fmt.Println("   位置: 2, 4")
+		fmt.Println("   サイズ: 76 x 4")
+		fmt.Println("   内容: 6つのステータスボックス (STATUS, CPU, MEMORY, NETWORK, STORAGE, LATENCY)")
+		fmt.Println()
+		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println()
+		fmt.Println("INTERACTIVE_ELEMENTS:")
+		fmt.Println("[LIVE] - click: Toggle live mode → (画面遷移なし)")
+		fmt.Println("[ALERT] - click: Show alerts → alerts.txt")
+		fmt.Println("[X] - click: Close application → (アプリケーション終了)")
+		
+	case "trading":
+		fmt.Println("画面名: Trading Floor Terminal")
+		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println()
+		fmt.Println("要求仕様:")
+		fmt.Println("1. 枠線は +, -, | を使用して描画")
+		fmt.Println("2. すべての要素は指定された位置に配置")
+		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println()
+		fmt.Println("UI要素:")
+		fmt.Println("1. TradingFloor Terminal (header)")
+		fmt.Println("   位置: 2, 1")
+		fmt.Println()
+		fmt.Println("2. Menu Bar (header)")
+		fmt.Println("   位置: right-30, 1")
+		fmt.Println("   内容: [LIVE], [RISK], [P&L], [ALERTS]")
+		fmt.Println()
+		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println()
+		fmt.Println("INTERACTIVE_ELEMENTS:")
+		fmt.Println("[LIVE] - click: Toggle live trading → (画面遷移なし)")
+		fmt.Println("[RISK] - click: Open risk management → risk_management.txt")
+		fmt.Println("[P&L] - click: Show P&L report → pnl_report.txt")
+		fmt.Println("[ALERTS] - click: Show alerts → trading_alerts.txt")
+		
+	case "login":
+		fmt.Println("画面名: Login Form")
+		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println()
+		fmt.Println("要求仕様:")
+		fmt.Println("1. 枠線は +, -, | を使用して描画")
+		fmt.Println("2. すべての要素は指定された位置に配置")
+		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println()
+		fmt.Println("UI要素:")
+		fmt.Println("1. LOGIN FORM (header)")
+		fmt.Println("   位置: center, 1")
+		fmt.Println()
+		fmt.Println("2. Login Container (box)")
+		fmt.Println("   位置: center, 5")
+		fmt.Println("   サイズ: 40 x 10")
+		fmt.Println("   内容: Username入力欄, Password入力欄, Loginボタン, Cancelボタン")
+		fmt.Println()
+		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println()
+		fmt.Println("INTERACTIVE_ELEMENTS:")
+		fmt.Println("Username - input: text入力 → (画面遷移なし)")
+		fmt.Println("Password - input: password入力 → (画面遷移なし)")
+		fmt.Println("[Login] - click: Submit login → dashboard.txt")
+		fmt.Println("[Cancel] - click: Cancel login → (画面遷移なし)")
+		
+	case "dashboard":
+		fmt.Println("画面名: System Dashboard")
+		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println()
+		fmt.Println("要求仕様:")
+		fmt.Println("1. 枠線は +, -, | を使用して描画")
+		fmt.Println("2. すべての要素は指定された位置に配置")
+		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println()
+		fmt.Println("UI要素:")
+		fmt.Println("1. DASH (header)")
+		fmt.Println("   位置: 2, 1")
+		fmt.Println()
+		fmt.Println("2. User info (header)")
+		fmt.Println("   位置: right-15, 1")
+		fmt.Println("   内容: User: admin")
+		fmt.Println()
+		fmt.Println("3. Sidebar (vertical separator)")
+		fmt.Println("   位置: 20, 2")
+		fmt.Println("   高さ: height-3")
+		fmt.Println()
+		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println()
+		fmt.Println("INTERACTIVE_ELEMENTS:")
+		fmt.Println("NAV items - click: Navigate to section → (画面遷移なし)")
+		
+	default:
+		fmt.Printf("画面名: %s\n", layout)
+		fmt.Printf("サイズ: %d x %d 文字\n", CANVAS_WIDTH, height)
+		fmt.Println()
+		fmt.Println("要求仕様:")
+		fmt.Println("1. 枠線は +, -, | を使用して描画")
+		fmt.Println("2. すべての要素は指定された位置に配置")
+		fmt.Println("3. テキストは枠内に収まるように配置")
+		fmt.Println()
+		fmt.Println("UI要素:")
+		fmt.Println("カスタムレイアウトを作成してください")
+		fmt.Println()
+		fmt.Println("ASCII UIの下に以下の形式でINTERACTIVE_ELEMENTSセクションを追加:")
+		fmt.Println()
+		fmt.Println("INTERACTIVE_ELEMENTS:")
+		fmt.Println("(インタラクティブ要素がある場合はここに記載)")
+	}
+}
+
 func main() {
 	var (
-		mode     = flag.String("mode", "create", "Mode: create, check, view")
+		mode     = flag.String("mode", "create", "Mode: create, check, view, ai-instruction, ui-flow")
 		layout   = flag.String("layout", "netops", "Layout: netops, trading, cyber, data, space, dashboard, login, box")
 		height   = flag.Int("h", 25, "Height of the canvas")
 		width    = flag.Int("w", 40, "Width for simple box (max 80)")
 		title    = flag.String("t", "", "Title for the layout")
 		filename = flag.String("f", "", "File to check or view")
+		output   = flag.String("o", "ui-flow.md", "Output file for ui-flow mode")
 	)
 	
 	flag.Usage = func() {
@@ -566,6 +916,8 @@ func main() {
 		fmt.Fprintf(os.Stderr, "  create    - Create new ASCII art\n")
 		fmt.Fprintf(os.Stderr, "  check     - Check existing ASCII art for issues\n")
 		fmt.Fprintf(os.Stderr, "  view      - View with grid overlay\n")
+		fmt.Fprintf(os.Stderr, "  ai-instruction - Generate AI instructions for creating UI\n")
+		fmt.Fprintf(os.Stderr, "  ui-flow   - Generate UI flow diagram in Mermaid format\n")
 		fmt.Fprintf(os.Stderr, "\nLayouts (for create mode):\n")
 		fmt.Fprintf(os.Stderr, "  netops    - Network Operations Center\n")
 		fmt.Fprintf(os.Stderr, "  trading   - Trading Floor Terminal\n")
@@ -581,6 +933,9 @@ func main() {
 		fmt.Fprintf(os.Stderr, "  %s -layout trading -h 35\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "  %s -layout cyber -h 25\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "  %s -mode check -f myart.txt\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  %s -mode ai-instruction -layout login\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  %s -mode ai-instruction -layout dashboard\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  %s -mode ui-flow -o ui-flow.md\n", os.Args[0])
 	}
 	
 	flag.Parse()
@@ -719,9 +1074,35 @@ func main() {
 		
 		as.ShowGrid()
 		
+	case "ai-instruction":
+		generateAIInstruction(*layout, *height)
+		
+	case "ui-flow":
+		// Read all txt files in current directory to detect screens
+		files, err := os.ReadDir(".")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error reading directory: %v\n", err)
+			os.Exit(1)
+		}
+		
+		var screens []string
+		for _, file := range files {
+			if !file.IsDir() && strings.HasSuffix(file.Name(), ".txt") {
+				screens = append(screens, file.Name())
+			}
+		}
+		
+		err = generateUIFlowDynamic(*output, screens)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error generating UI flow: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("UI flow diagram written to: %s\n", *output)
+		fmt.Printf("Found %d screens: %v\n", len(screens), screens)
+		
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown mode: %s\n", *mode)
-		fmt.Fprintf(os.Stderr, "Available modes: create, check, view\n")
+		fmt.Fprintf(os.Stderr, "Available modes: create, check, view, ai-instruction, ui-flow\n")
 		os.Exit(1)
 	}
 }

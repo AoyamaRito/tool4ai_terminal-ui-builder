@@ -1,0 +1,29 @@
++------------------------------------------------------------------------------+
+| System Dashboard                                    User: admin    [Logout]  |
++------------------------------------------------------------------------------+
+| +------------------+  +---------------------------------------------------+ |
+| | Navigation       |  | System Status                                     | |
+| | =============== |  | CPU: [████████░░] 78%   Memory: [██████░░░░] 62% | |
+| | > Overview       |  | Disk: [███░░░░░░░] 31%  Network: [█████░░░░░] 52%| |
+| | > Network Ops    |  +---------------------------------------------------+ |
+| | > Trading Floor  |                                                         |
+| | > Cyber Defense  |  +---------------------------------------------------+ |
+| | > Data Control   |  | Recent Activities                                 | |
+| | > Space Mission  |  | - 14:32:01 System backup completed                | |
+| |                  |  | - 14:30:15 User login: admin                      | |
+| | [Settings]       |  | - 14:28:42 Database optimization finished         | |
+| | [Help]           |  | - 14:25:30 Security scan: No threats              | |
+| +------------------+  +---------------------------------------------------+ |
+|                                                                              |
++------------------------------------------------------------------------------+
+
+INTERACTIVE_ELEMENTS:
+[Logout] - click: Logout → login.txt
+> Overview - click: Navigate to overview → (画面遷移なし)
+> Network Ops - click: Open network operations → netops.txt
+> Trading Floor - click: Open trading floor → trading.txt
+> Cyber Defense - click: Open cyber defense → cyber.txt
+> Data Control - click: Open data control → data.txt
+> Space Mission - click: Open space mission → space.txt
+[Settings] - click: Open settings → settings.txt
+[Help] - click: Show help → help.txt
