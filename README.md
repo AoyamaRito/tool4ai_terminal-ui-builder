@@ -2,17 +2,31 @@
 
 🤖 **AI-First Terminal Interface Designer**
 
+**📋 Enable Claude Code to create pixel-perfect ASCII art UI designs instantly!**
+
 **Designed specifically for AI assistants like Claude Code, ChatGPT, and other AI development tools.**
 
-This tool enables AI assistants to generate professional, pixel-perfect terminal interfaces instantly. Instead of struggling with manual ASCII art alignment, AI can now create complex dashboards, forms, and UIs with a single command.
+**Perfect workflow: AI creates → Humans view → AI codes**
 
-## 🎯 Why AI-First?
+1. 🤖 **AI easily creates ASCII art UIs** - Claude Code generates complex interfaces with perfect alignment
+2. 👁️ **Humans can view without special viewers** - Plain text format readable anywhere 
+3. 💻 **AI can code from these designs** - Claude Code uses the ASCII designs as blueprints for implementation
 
-- **Perfect for AI assistants** - Simple commands generate complex interfaces
-- **No manual alignment** - AI doesn't need to worry about spacing or structure
-- **Consistent output** - Every generation is perfectly formatted
-- **Instant prototyping** - AI can create UI mockups in seconds
-- **Professional quality** - Production-ready terminal interfaces
+By using this tool, Claude Code can generate professional, accurate ASCII art terminal interfaces without alignment issues. Instead of struggling with manual ASCII art spacing problems, Claude Code can now create complex dashboards, forms, and UIs with perfect precision using a single command.
+
+## 🎯 Complete Design-to-Code Workflow
+
+**For AI Assistants:**
+- **🤖 Easy ASCII UI creation** - Generate complex interfaces without alignment struggles
+- **📐 Perfect ASCII art alignment** - Pixel-perfect terminal UIs every time
+- **💻 Blueprint for coding** - Use generated designs as implementation guides
+- **⚡ Instant generation** - Simple commands create professional interfaces
+
+**For Human Developers:**
+- **👁️ Universal viewing** - No special viewers needed, readable in any text editor
+- **📋 Clear design documents** - Perfect for specifications and documentation
+- **🤝 AI-Human collaboration** - AI creates designs, humans review, AI implements
+- **✅ Consistent communication** - Same format for design and development phases
 
 ![ASCII Art](https://img.shields.io/badge/ASCII-Art-brightgreen)
 ![Go](https://img.shields.io/badge/Go-1.19+-blue)
