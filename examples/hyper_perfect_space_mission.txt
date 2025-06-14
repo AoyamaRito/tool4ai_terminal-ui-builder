@@ -1,0 +1,80 @@
++------------------------------------------------------------------------------+
+| Mission Control Center - Mars Rover Expedition            [T+2847d] [ACTIVE] |
++==============================================================================+
+| Telemetry | Navigation | Science | Comms | Power | Health | Ops | Emergency  |
++------------------------------------------------------------------------------+
+| +----------+ +----------+ +----------+ +----------+ +----------+ +----------+ |
+| |POSITION  | |POWER SYS | |SCIENCE   | |COMMS     | |HEALTH    | |WEATHER   | |
+| +----------+ +----------+ +----------+ +----------+ +----------+ +----------+ |
+| |LAT:      | |Solar:    | |Samples:  | |Earth:    | |CPU Temp: | |Sol: 2847 | |
+| |-14.5692  | |847W      | |   1,247  | |Signal:   | | 45.2C    | |Temp:     | |
+| |LON:      | |Battery:  | |Analysis: | | Strong   | |Memory:   | |-73C/12C  | |
+| |137.4421  | |89% Cap   | |  Complete| |Rate:     | | 89% Used | |Wind:     | |
+| |ALT:      | |Status:   | |Drilling: | | 2.4 kbps | |Drives:   | |15 mph NE | |
+| |-4,532m   | | NOMINAL  | | Ready    | |Next Pass:| | 2.1TB    | |Pressure: | |
+| |Heading:  | |Est. Life:| |Arm:      | | 14:32    | |Wheels:   | | 8.2 mbar | |
+| |087 deg   | | 847 sols | | Extended | |Relay:    | | 5/6 OK   | |Dust:     | |
+| |Speed:    | |Charge:   | |Laser:    | | MRO Link | |Motors:   | | Minimal  | |
+| |0.00 m/s  | | 12.4A    | | Ready    | | Active   | | All Good | |Visibility| |
+| +----------+ +----------+ +----------+ +----------+ +----------+ | Excellent| |
+|                                                                 +----------+ |
+| +------------------------------+ +-------------------------------------+ +--+ |
+| | MISSION TIMELINE        [>>>]| | INSTRUMENT STATUS              [CAL]| |3D| |
+| +------------------------------+ +-------------------------------------+ +--+ |
+| | Sol 2847: Science operations | | MAHLI Camera:      [READY]          | |  | |
+| | 09:15 Drive to waypoint 1247 | | MARDI Descent:     [STANDBY]        | |  | |
+| | 10:30 Deploy drill arm       | | MastCam Stereo:    [ACTIVE]         | |  | |
+| | 11:45 Collect rock sample    | | ChemCam Laser:     [READY]          | |  | |
+| | 13:20 Analyze with SAM       | | APXS Spectrometer: [DEPLOYED]       | |  | |
+| | 14:32 Downlink to Earth      | | SAM Laboratory:    [PROCESSING]     | |  | |
+| |                              | | RAD Monitor:       [CONTINUOUS]     | |  | |
+| | NEXT SOL PLAN:               | | REMS Weather:      [ACTIVE]         | |  | |
+| | 08:00 Morning health check   | | MEDA Environment:  [NOMINAL]        | |  | |
+| | 09:30 Continue traverse      | | Drill System:      [STOWED]         | |  | |
+| | 11:00 Target rock outcrop    | +-------------------------------------+ |  | |
+| | 12:30 Spectroscopy analysis | | FLIGHT SOFTWARE            [UPDATE] | |  | |
+| | 14:00 Image panorama         | +-------------------------------------+ |  | |
+| +------------------------------+ | Version: R15.2.1                    | |  | |
+| | TRAVERSE MAP            [3D] | | Uptime: 2,847 sols                  | |  | |
+| +------------------------------+ | Commands Executed: 147,892          | |  | |
+| | Distance Traveled:           | | Autonomy Level: HIGH                | |  | |
+| | Total: 24.73 km              | | Auto-Nav: ENABLED                   | |  | |
+| | Today: 89.4 m                | | Hazard Avoidance: ACTIVE            | |  | |
+| | Remaining: 2.1 km to target  | | Power Management: AUTO              | |  | |
+| |                              | | Thermal Control: NOMINAL            | +--+ |
+| | GEOLOGICAL FEATURES:         | +-------------------------------------+      |
+| | Crater: Jezero (45 km diam)  | | SCIENCE DISCOVERIES         [REPORT]|      |
+| | Rock Type: Igneous basalt    | +-------------------------------------+      |
+| | Minerals: Olivine, Pyroxene  | | Organic compounds: 23 detected      |      |
+| | Water signs: Ancient delta   | | Biosignatures: Under analysis       |      |
+| +------------------------------+ | Rock age: 3.7 billion years         |      |
+|                                | | pH levels: 6.8 (nearly neutral)    |      |
+| +------------------------------+ | Mineral diversity: 47 types found   |      |
+| | MISSION OBJECTIVES     [89%] | | Water evidence: Multiple locations  |      |
+| +------------------------------+ |                                     |      |
+| | [✓] Land safely in crater    | | SAMPLE COLLECTION:                  |      |
+| | [✓] Deploy all instruments   | | Sealed tubes: 18/38 filled          |      |
+| | [✓] Find water evidence      | | Cache depot: 12 samples stored     |      |
+| | [●] Collect 38 samples       | | Return mission: Planned 2030        |      |
+| | [●] Search for life signs    | +-------------------------------------+      |
+| | [ ] Prepare sample return    |                                              |
+| +------------------------------+ +--------------------------------------------+ |
+| | GROUND TEAM          [SHIFT] | | ANOMALY TRACKING               [RESOLVE] | |
+| +------------------------------+ +--------------------------------------------+ |
+| | Flight Director: S. Chen     | | Sol 2846: Right-rear wheel noise          | |
+| | Rover Planner: M. Rodriguez  | | Status: MONITORING (within limits)        | |
+| | Science Lead: Dr. Patel      | | Sol 2843: ChemCam alignment drift         | |
+| | Systems Eng: K. Thompson     | | Status: RESOLVED (recalibrated)           | |
+| | Mission Ops: 24/7 coverage   | | Sol 2840: Memory usage spike              | |
+| |                              | | Status: RESOLVED (cache cleared)          | |
+| | NEXT SHIFT: 16:00 UTC        | +--------------------------------------------+ |
+| | On Call: Emergency team      | | RISK ASSESSMENT                     [LOW] | |
+| +------------------------------+ +--------------------------------------------+ |
+|                                | | Dust storm season: 90 sols away           | |
+|                                | | Hardware degradation: ACCEPTABLE          | |
+|                                | | Power trending: STABLE                    | |
+|                                | | Communication: NOMINAL                    | |
+|                                | +--------------------------------------------+ |
++------------------------------------------------------------------------------+
+| Sol 2847 | Local Time: 15:42 | Earth Time: 14:25 UTC | Signal Delay: 14m 23s |
++------------------------------------------------------------------------------+

@@ -1,0 +1,46 @@
++------------------------------------------------------------------------------+
+| CodeSpace Pro                                                    [_][O][X]  |
++==============================================================================+
+| File Edit View Search Run Debug Git Tools Window Help               v1.2.3  |
++------------------------------------------------------------------------------+
+| [New] [Open] [Save] | [Cut] [Copy] [Paste] | [Find] [Replace] | [Run] [Stop] |
++------------------------------------------------------------------------------+
+| +-----------+ +--------------------------------------------------+ +------+ |
+| |EXPLORER   | | main.py                                    [X] | |OUTLINE| |
+| +-----------+ +==================================================+ +------+ |
+| |v project  | | 1  # Main application entry point              | |Classes| |
+| | v src/    | | 2  import os                                   | |------| |
+| | | main.py*| | 3  import sys                                  | |App   | |
+| | | utils.py| | 4  from flask import Flask, request, jsonify   | |User  | |
+| | | models/ | | 5                                              | |      | |
+| | v tests/  | | 6  app = Flask(__name__)                       | |Methods| |
+| | | test.py | | 7                                              | |------| |
+| | config.py | | 8  @app.route('/api/health')                   | |init  | |
+| | README.md | | 9  def health_check():                         | |login | |
+| |           | |10      return jsonify({'status': 'healthy'})   | |logout| |
+| |           | |11                                              | |      | |
+| |GIT CHANGES| |12  @app.route('/api/users', methods=['GET'])   | |Vars  | |
+| +-----------+ |13  def get_users():                            | |------| |
+| |M main.py  | |14      # TODO: Implement user fetching        | |app   | |
+| |A utils.py | |15      users = []                              | |config| |
+| |? temp.log | |16      return jsonify(users)                   | |db    | |
+| |           | |17                                              | +------+ |
+| |[Commit]   | |18  if __name__ == '__main__':                  | |TASKS | |
+| +-----------+ |19      app.run(debug=True, port=5000)          | +------+ |
+|               +--------------------------------------------------+ |TODO  | |
+| +-----------+ | PROBLEMS                     | TERMINAL           | |[ ]Fix| |
+| |EXTENSIONS | +------------------------------+-------------------+ |[ ]Test| |
+| +-----------+ | ! Line 14: TODO comment     | $ python main.py  | |[x]Doc| |
+| |Python     | | ~ Line 6: Missing docstring | Flask app running | |      | |
+| |Git        | | ! Line 15: Empty list       | * Debug mode: On  | |[+Add]| |
+| |Prettier   | +-----------------------------+ Port: 5000        | +------+ |
+| |ESLint     | | OUTPUT                      | Ctrl+C to quit   | |DEBUG | |
+| |Docker     | +-----------------------------+-------------------+ +------+ |
+| |           | | Application started         | $ git status      | |Breaks| |
+| |[Install]  | | Server running on port 5000 | On branch main    | |------| |
+| +-----------+ | No syntax errors found      | Changes:          | |L14   | |
+|               | Ready for debugging         |   M main.py       | |L19   | |
+|               +-----------------------------+-------------------+ +------+ |
++------------------------------------------------------------------------------+
+| Line 14, Col 28 | Python | UTF-8 | Spaces: 4 | Branch: main | Errors: 0   |
++------------------------------------------------------------------------------+

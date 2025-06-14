@@ -1,0 +1,42 @@
++------------------------------------------------------------------------------+
+| Terminal Pro v2.1                           [_] [O] [X]     user@localhost  |
++==============================================================================+
+| File  Edit  View  Terminal  Tools  Help              Session: main    [+]  |
++------------------------------------------------------------------------------+
+| +--------+ +------------------------------------------------------------+ [^] |
+| |SESSIONS| | ~/projects/myapp$ ls -la                                   | |#| |
+| +--------+ | total 48                                                   | |#| |
+| |main [*]| | drwxr-xr-x  12 user staff   384 Jun 14 10:45 .             | |#| |
+| |server  | | drwxr-xr-x   5 user staff   160 Jun 13 09:30 ..            | |#| |
+| |logs    | | -rw-r--r--   1 user staff  1234 Jun 14 10:30 package.json  | |#| |
+| |docker  | | -rw-r--r--   1 user staff   567 Jun 14 09:15 README.md     | |#| |
+| |        | | drwxr-xr-x   8 user staff   256 Jun 14 10:00 src           | |#| |
+| |[+] New | | drwxr-xr-x   4 user staff   128 Jun 13 15:30 tests         | |#| |
+| +--------+ | -rwxr-xr-x   1 user staff   890 Jun 14 10:45 start.sh      | |#| |
+| |BOOKMARKS| |                                                            | |#| |
+| +--------+ | ~/projects/myapp$ npm run dev                              | |#| |
+| |/home   | | > myapp@1.0.0 dev                                          | |#| |
+| |/var/log| | > nodemon app.js                                           | |#| |
+| |/etc    | |                                                            | |#| |
+| |/tmp    | | [nodemon] 2.0.15                                           | |#| |
+| |        | | [nodemon] to restart at any time, enter 'rs'              | |#| |
+| +--------+ | [nodemon] watching path(s): *.*                            | |#| |
+| |COMMANDS| | [nodemon] watching extensions: js,mjs,json                 | |#| |
+| +--------+ | [nodemon] starting 'node app.js'                          | |#| |
+| |git st  | |                                                            | |#| |
+| |npm i   | | Server starting on port 3000...                           | |#| |
+| |docker  | | Database connected successfully                            | |#| |
+| |ps aux  | | Middleware loaded: cors, helmet, morgan                    | |#| |
+| |top     | | Routes registered: /api/users, /api/auth                   | |#| |
+| |        | |                                                            | |#| |
+| |[Clear] | | Application ready and listening on port 3000              | |#| |
+| +--------+ | Press Ctrl+C to stop                                      | |#| |
+|            |                                                            | |#| |
+|            | ~/projects/myapp$ _                                        | [v] |
+|            +------------------------------------------------------------+ |#| |
+|            | Input: [git status                              ] [Enter]  | |#| |
+|            | Autocomplete: git status | git add | git commit | git push | |#| |
+|            +------------------------------------------------------------+ |#| |
++------------------------------------------------------------------------------+
+| Processes: 4 active | Memory: 8.2GB/16GB | CPU: 15% | Network: Connected    |
++------------------------------------------------------------------------------+

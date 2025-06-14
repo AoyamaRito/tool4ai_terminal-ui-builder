@@ -1,0 +1,49 @@
++------------------------------------------------------------------------------+
+| DatabaseManager Pro                                           [Admin] [Help] |
++==============================================================================+
+| Connect Database Query Tools Admin Export Import              Server: Online |
++------------------------------------------------------------------------------+
+| +----------+ +---------------------------------------------------------+ [!] |
+| |DATABASES | | Query Editor                           [Execute] [Save] | |#| |
+| +----------+ +=========================================================+ |#| |
+| |v myapp_db| | SELECT u.id, u.username, u.email, p.name as profile   | |#| |
+| | > users  | | FROM users u                                           | |#| |
+| | > orders | | LEFT JOIN profiles p ON u.id = p.user_id              | |#| |
+| | > products| | WHERE u.created_at > '2025-01-01'                     | |#| |
+| | > logs   | | ORDER BY u.created_at DESC                             | |#| |
+| |v test_db | | LIMIT 50;                                              | |#| |
+| | > sample | |                                                        | |#| |
+| |          | | [History] [Templates] [Format] [Explain Plan]         | |#| |
+| |[+ Add DB]| +---------------------------------------------------------+ |#| |
+| +----------+ | RESULTS (3 rows, 0.023s)              [Export] [Copy] | |#| |
+| |TABLE INFO| +---------------------------------------------------------+ |#| |
+| +----------+ | id | username | email            | profile            | |#| |
+| |users     | |----|----------|------------------|--------------------| |#| |
+| |Rows: 1,234| | 1  | john_doe | john@example.com | Software Developer | |#| |
+| |Size: 2.4MB| | 2  | jane_s   | jane@company.io  | Product Manager    | |#| |
+| |Indexes: 3| | 3  | bob_user | bob@startup.com  | Designer           | |#| |
+| |          | +---------------------------------------------------------+ |#| |
+| |Columns:  | | QUERY HISTORY                                         | |#| |
+| |id (PK)   | +---------------------------------------------------------+ |#| |
+| |username  | | 10:45 - SELECT COUNT(*) FROM users                    | |#| |
+| |email     | | 10:42 - UPDATE users SET last_login = NOW()           | |#| |
+| |password  | | 10:38 - INSERT INTO orders (user_id, total) VALUES... | |#| |
+| |created_at| | 10:35 - SELECT * FROM products WHERE price > 100      | |#| |
+| |updated_at| +---------------------------------------------------------+ |#| |
+| +----------+ | PERFORMANCE MONITOR                  [Refresh] [Alert] | |#| |
+|              +---------------------------------------------------------+ |#| |
+| +----------+ | Active Connections: 12/100                             | |#| |
+| |FAVORITES | | Query Execution Time: 0.023s (Good)                   | |#| |
+| +----------+ | Cache Hit Ratio: 94.5% (Excellent)                    | |#| |
+| |Top Users | | Slow Queries: 0 (Last hour)                           | |#| |
+| |Analytics | | Database Size: 245.6 MB                               | |#| |
+| |Backup Log| | Last Backup: 2025-06-14 02:00 (Success)               | |#| |
+| |User Mgmt | +---------------------------------------------------------+ |#| |
+| |          | | TOOLS                                                 | |#| |
+| |[Manage]  | +---------------------------------------------------------+ |#| |
+| +----------+ | [Create Table] [Import CSV] [Export SQL] [Backup Now]  | |#| |
+|              | [User Management] [Index Optimizer] [Query Analyzer]   | [v] |
+|              +---------------------------------------------------------+ |#| |
++------------------------------------------------------------------------------+
+| Connected: myapp_db@localhost:5432 | Users: 3 online | Queries: 1,247 today |
++------------------------------------------------------------------------------+
