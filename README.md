@@ -63,12 +63,42 @@ This tool enables AI assistants to generate professional, pixel-perfect terminal
 
 ### For Human Developers
 
+#### macOS
 ```bash
-# Download the latest release
-go build -o terminal-ui-builder terminal-ui-builder.go
+# Intel Mac
+curl -L https://github.com/AoyamaRito/tool4ai_terminal-ui-builder/raw/main/releases/terminal-ui-builder-darwin-amd64 -o terminal-ui-builder
+chmod +x terminal-ui-builder
 
-# Or use directly
-go run terminal-ui-builder.go --help
+# Apple Silicon Mac
+curl -L https://github.com/AoyamaRito/tool4ai_terminal-ui-builder/raw/main/releases/terminal-ui-builder-darwin-arm64 -o terminal-ui-builder
+chmod +x terminal-ui-builder
+```
+
+#### Linux
+```bash
+# AMD64
+curl -L https://github.com/AoyamaRito/tool4ai_terminal-ui-builder/raw/main/releases/terminal-ui-builder-linux-amd64 -o terminal-ui-builder
+chmod +x terminal-ui-builder
+
+# ARM64
+curl -L https://github.com/AoyamaRito/tool4ai_terminal-ui-builder/raw/main/releases/terminal-ui-builder-linux-arm64 -o terminal-ui-builder
+chmod +x terminal-ui-builder
+```
+
+#### Windows
+```powershell
+# PowerShell - AMD64
+Invoke-WebRequest https://github.com/AoyamaRito/tool4ai_terminal-ui-builder/raw/main/releases/terminal-ui-builder-windows-amd64.exe -OutFile terminal-ui-builder.exe
+
+# PowerShell - ARM64
+Invoke-WebRequest https://github.com/AoyamaRito/tool4ai_terminal-ui-builder/raw/main/releases/terminal-ui-builder-windows-arm64.exe -OutFile terminal-ui-builder.exe
+```
+
+#### Build from Source
+```bash
+git clone https://github.com/AoyamaRito/tool4ai_terminal-ui-builder.git
+cd tool4ai_terminal-ui-builder
+go build -o terminal-ui-builder terminal-ui-builder.go
 ```
 
 ### AI-Friendly Commands
@@ -125,28 +155,42 @@ AI assistants can use these simple patterns:
 -mode string     Mode: create, check, view (default "create")
 ```
 
-## 🌟 Examples
+## 🌟 Live Demos
 
-### Network Operations Center
+### 🚀 Complex Network Operations Center
+
+AI can generate sophisticated monitoring dashboards instantly:
 
 ```bash
-./terminal-ui-builder -layout netops -h 25
+./terminal-ui-builder -layout netops -h 35
 ```
 
 ```
 +------------------------------------------------------------------------------+
 | NetOps CmdCtr                                        [LIVE] [ALERT] [X]      |
 +------------------------------------------------------------------------------+
+|                                                                              |
 | +----------+ +----------+ +----------+ +----------+ +----------+ +----------+|
 | | STATUS   | | CPU      | | MEMORY   | | NETWORK  | | STORAGE  | | LATENCY  ||
 | | CORE     | | 73%      | | 12GB/32GB| | 89%      | | 2.1TB/5TB| | 12ms     ||
 | +----------+ +----------+ +----------+ +----------+ +----------+ +----------+|
+|                                                                              |
+| +----------------------------+  +------------------------------------------+ |
+| | LIVE TRAFFIC FLOW          |  | INCIDENT RESPONSE                        | |
+| | US-WEST [====] 892 Mbps    |  | HIGH: SSL Cert Expiring 3d               | |
+| | US-EAST [===] 634 Mbps     |  | MED: High mem usage DB-02                | |
+| | EU-WEST [==] 423 Mbps      |  | LOW: CDN cache miss >15%                 | |
+| +----------------------------+  +------------------------------------------+ |
+| Ops: 4 engineers | Global: 99.97% uptime                                     |
++------------------------------------------------------------------------------+
 ```
 
-### Trading Floor Terminal
+### 💹 Professional Trading Terminal
+
+Perfect for financial AI applications:
 
 ```bash
-./terminal-ui-builder -layout trading -h 25
+./terminal-ui-builder -layout trading -h 30
 ```
 
 ```
@@ -157,7 +201,82 @@ AI assistants can use these simple patterns:
 | | PORTFOLIO| | P&L TODAY| | RISK EXPO| | MARGIN   | | EXECUTION| | MARKET   ||
 | | $2.45M   | | +$21,373 | | $45,678  | | $890K    | | 1,247    | | SPY 441  ||
 | +----------+ +----------+ +----------+ +----------+ +----------+ +----------+|
+| +-----------------------+  +-----------------------+  +--------------------+ |
+| | ACTIVE POSITIONS      |  | PENDING ORDERS        |  | MARKET DEPTH - SPY | |
+| | SPY  |100 |+1250|2.1% |  | LMT|AAPL|50|185.50    |  | 2,500|441.22|1,800 | |
+| | AAPL |200 |+890 |1.8% |  | STP|TSLA|25|245.00    |  | 3,200|441.23|2,100 | |
+| +-----------------------+  +-----------------------+  +--------------------+ |
++------------------------------------------------------------------------------+
 ```
+
+### 🛡️ Cyber Security Command Center
+
+AI-generated security operations dashboard:
+
+```bash
+./terminal-ui-builder -layout cyber -h 25
+```
+
+```
++------------------------------------------------------------------------------+
+| CyberDefense CmdCtr                                  [DEFCON 3] [ACTIVE]     |
++------------------------------------------------------------------------------+
+| +----------+ +----------+ +----------+ +----------+ +----------+ +----------+|
+| | SECURITY | | THREATS  | | INCIDENTS| | NETWORK  | | ENDPOINTS| | INTEL    ||
+| | DEFCON: 3| | Crit: 0  | | P1: 0    | | 2.4 Gbps | | 12,456   | | 47 feeds ||
+| +----------+ +----------+ +----------+ +----------+ +----------+ +----------+|
+| +---------------------------------+  +-------------------------------------+ |
+| | LIVE THREAT MAP                 |  | INCIDENT TIMELINE                   | |
+| | US-EAST [***] 23 attacks        |  | 12:47 [P2] Suspicious PowerShell    | |
+| | ASIA-PAC [****] 34 attacks      |  | 12:45 [P3] Failed login x50         | |
+| +---------------------------------+  +-------------------------------------+ |
++------------------------------------------------------------------------------+
+```
+
+### 🚀 Space Mission Control
+
+Science & research AI applications:
+
+```bash
+./terminal-ui-builder -layout space -h 25
+```
+
+```
++------------------------------------------------------------------------------+
+| MsnCtrl Center - Mars Rover                               [T+2847d] [ACTIVE] |
++------------------------------------------------------------------------------+
+| +----------+ +----------+ +----------+ +----------+ +----------+ +----------+|
+| | POSITION | | POWER SYS| | SCIENCE  | | COMMS    | | HEALTH   | | WEATHER  ||
+| | -14.57...|  | 847W     | | 1,247 ...| | 2.4 kbps | | 45.2C    | | -73C/12C ||
+| +----------+ +----------+ +----------+ +----------+ +----------+ +----------+|
+| +----------------------------+  +--------------------+  +------------------+ |
+| | MISSION TIMELINE           |  | INSTRUMENT STATUS  |  | DISCOVERIES      | |
+| | Sol 2847: Science ops      |  | MAHLI: [READY]     |  | Organic: 23 det  | |
+| | 09:15 Drive waypoint       |  | MastCam: [ACTIVE]  |  | Tubes: 18/38     | |
+| +----------------------------+  +--------------------+  +------------------+ |
++------------------------------------------------------------------------------+
+```
+
+### ⚡ One-Command Generation
+
+**AI assistants can create any of these complex interfaces with a single command:**
+
+```bash
+# Network operations dashboard
+./terminal-ui-builder -layout netops -h 35 > network_dashboard.txt
+
+# Trading floor terminal  
+./terminal-ui-builder -layout trading -h 30 > trading_terminal.txt
+
+# Security operations center
+./terminal-ui-builder -layout cyber -h 25 > security_center.txt
+```
+
+**Perfect for:**
+- 🤖 AI documentation generation
+- 📋 System design discussions  
+- 🎓 Teaching interface concepts
+- 🔧 Rapid prototyping sessions
 
 ## 🔍 Quality Checking
 
