@@ -1,4 +1,4 @@
-# Tool4AI Terminal UI Builder( I renamed the project. the new name is "kit4ai". this is too long name)
+# Tool4AI Terminal UI Builder( I renamed the project. the new name is "kit4ai". the old name is too long name)
 
 🤖 **AI-First Terminal Interface Designer**
 
